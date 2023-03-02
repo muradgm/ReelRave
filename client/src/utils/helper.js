@@ -65,3 +65,45 @@ export const isValidPassword = (password) => {
 
   return { ok: true };
 };
+
+export const getToken = () => localStorage.getItem("auth-token");
+
+export const catchError = (error) => {
+  const { response } = error;
+  if (response?.data) return response.data;
+
+  return { error: error.message || error };
+};
+
+export const renderItem = (result, index, focusedIndex, isKeyDown) => {
+  return (
+    <div key={result.id} className="flex group space-x-3">
+      <span className="w-16 h-16 overflow-hidden">
+        <img
+          src={result.avatar}
+          alt={result.name}
+          className={` ${
+            isKeyDown && index === focusedIndex
+              ? "transition-all scale-125 transform ease-in-out duration-300"
+              : ""
+          } w-full h-full rounded-l group-hover:scale-125 transition-all transform ease-in-out duration-300`}
+        />
+      </span>
+      <p className="dark:text-primary text-accent">{result.name}</p>
+    </div>
+  );
+};
+export const defaultMovieInfo = {
+  title: "",
+  storyLine: "",
+  tags: [],
+  cast: [],
+  director: {},
+  writers: [],
+  releaseDate: "",
+  poster: null,
+  genres: [],
+  type: "",
+  language: "",
+  status: "",
+};

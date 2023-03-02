@@ -22,14 +22,12 @@ const LiveSearch = ({
   const handleOnFocus = () => {
     if (results.length) setDisplaySearch(true);
   };
-
   const handleSelection = (selectedItem) => {
     if (selectedItem) {
       onSelect(selectedItem);
       setDisplaySearch(false);
     }
   };
-
   const handleKeyDown = (e) => {
     let nextCount;
     const { key } = e;
@@ -40,24 +38,24 @@ const LiveSearch = ({
     if (key === "ArrowDown") {
       nextCount = (focusedIndex + 1) % results.length;
       setIsKeyDown(true);
+      setFocusedIndex(nextCount);
     }
     if (key === "ArrowUp") {
       nextCount = (focusedIndex + results.length - 1) % results.length;
       setIsKeyDown(true);
+      setFocusedIndex(nextCount);
     }
     if (key === "Enter") {
       e.preventDefault();
       handleSelection(results[focusedIndex]);
       setFocusedIndex(-1);
     }
-    setFocusedIndex(nextCount);
     if (key === "Escape") {
       setDisplaySearch(false);
       setFocusedIndex(-1);
       setIsKeyDown(false);
     }
   };
-
   useEffect(() => {
     const handleClick = (e) => {
       if (!e.target.closest(".live-search") && displaySearch) {
@@ -71,12 +69,15 @@ const LiveSearch = ({
       document.removeEventListener("click", handleClick);
     };
   }, [displaySearch, setIsKeyDown]);
-
   const getInputStyle = () => {
     return inputStyle
       ? inputStyle
       : `${classes} border h-10 rounded-lg p-2 text-sm`;
   };
+  useEffect(() => {
+    if (results.length) return setDisplaySearch(true);
+    setDisplaySearch(false);
+  }, [results.length]);
 
   return (
     <div className="relative live-search">

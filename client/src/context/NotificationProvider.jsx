@@ -44,7 +44,7 @@ const NotificationProvider = ({ children }) => {
       {children}
       {notification && (
         <div
-          className={` z-[100] fixed left-1/2 -translate-x-1/2 top-20  flex items-center rounded-md text-white font-regular px-4 py-3 drop-shadow ${classes.class} transition-transform duration-300 ease-in-out w-fit`}
+          className={` z-[1000] fixed left-1/2 -translate-x-1/2 top-20  flex items-center rounded-md text-white font-regular px-4 py-3 drop-shadow ${classes.class} transition-transform duration-300 ease-in-out w-fit`}
           role="alert"
         >
           <div className="flex ">

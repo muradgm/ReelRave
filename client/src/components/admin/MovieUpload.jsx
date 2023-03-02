@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import { uploadTrailer } from "../../api/movies.js";
+import { uploadMovie, uploadTrailer } from "../../api/movies.js";
 import { useNotification } from "../../hooks/index.js";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import MovieForm from "./MovieForm.jsx";
-import WritersModal from "../modals/WritersModal.jsx";
+import { fetchMovieRating } from "../../api/ratings.js";
 
-const MovieUpload = () => {
+const MovieUpload = ({ visible, onClose }) => {
   const [file, setFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [videoSelected, setVideoSelected] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [trailerInfo, setTrailerInfo] = useState({});
-
   const { updateNotification } = useNotification();
+
+  const [showTrailerSelector, setShowTrailerSelector] = useState(true);
+  const [showProgress, setShowProgress] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   const handleUploadTrailer = async (data) => {
     const { error, url, public_id } = await uploadTrailer(
@@ -27,15 +30,21 @@ const MovieUpload = () => {
   };
 
   const handleChange = (file) => {
-    if (!file)
-      return updateNotification("error", "Please select a file to upload!");
-    if (file.size > 100000000)
-      return updateNotification("error", "file size must not exceed 100 MB!");
+    if (!file) {
+      updateNotification("error", "Please select a file to upload!");
+      return;
+    }
+    if (file.size > 100000000) {
+      updateNotification("error", "file size must not exceed 100 MB!");
+      return;
+    }
+
     setFile(file);
     const formData = new FormData();
     formData.append("video", file);
-
     setVideoSelected(true);
+    setShowTrailerSelector(false);
+    setShowProgress(true);
     handleUploadTrailer(formData);
   };
 
@@ -51,21 +60,80 @@ const MovieUpload = () => {
     return `Upload progress ${uploadProgress}%`;
   };
 
+  const handleClick = (e) => {
+    if (e.target.id === "movie-form-container") onClose();
+  };
+
+  const handleOnSubmitComplete = () => {
+    setVideoUploaded(false);
+    setVideoSelected(false);
+    setFile(null);
+    setTrailerInfo({});
+    setUploadProgress(0);
+    setShowTrailerSelector(true);
+    setShowProgress(false);
+    onClose();
+  };
+
+  const handleSubmit = async (data) => {
+    if (!trailerInfo.url || !trailerInfo.public_id) {
+      updateNotification("error", "Trailer is missing!");
+      return;
+    }
+    setBusy(true);
+
+    data.append("trailer", JSON.stringify(trailerInfo));
+    console.log("data :>> ", data);
+
+    const res = await uploadMovie(data);
+    setBusy(false);
+    console.log(res);
+
+    if (res.error) {
+      updateNotification("error", res.error);
+      return;
+    }
+
+    handleOnSubmitComplete();
+    updateNotification("success", "Movie uploaded successfully!");
+  };
+
+  if (!visible) return null;
+
   return (
-    <div className="  movie-wrapper fixed inset-0 dark:bg-primary bg-opacity-50 bg-accent dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-primary dark:bg-accent rounded-lg overflow-auto w-[45rem] h-[40rem] p-2 custom-scrollbar">
-        {/* <Progress
-          visible={!videoUploaded && videoSelected}
-          message={getUploadProgressValue()}
-          width={uploadProgress}
-        />
-        <TrailerSelector
-          visible={!videoSelected}
-          onTypeError={handleTypeError}
-          handleChange={handleChange}
-          file={file}
-        /> */}
-        <MovieForm />
+    <div
+      id="movie-form-container"
+      onClick={handleClick}
+      className="movie-wrapper fixed inset-0 z-[160] dark:bg-primary bg-opacity-50 bg-accent dark:bg-opacity-50 backdrop-blur-sm flex items-center justify-center"
+    >
+      <div className="bg-primary dark:bg-accent rounded-lg overflow-auto w-[45rem] h-[40rem] p-2 custom-scrollbar ">
+        {showTrailerSelector && (
+          <TrailerSelector
+            visible={!videoSelected}
+            onTypeError={handleTypeError}
+            handleChange={handleChange}
+            file={file}
+          />
+        )}
+        {!showTrailerSelector && (
+          <>
+            {videoSelected && !videoUploaded && (
+              <Progress
+                visible={videoSelected && !videoUploaded}
+                message={getUploadProgressValue()}
+                width={uploadProgress}
+              />
+            )}
+            {videoUploaded && (
+              <MovieForm
+                busy={busy}
+                visible={videoUploaded}
+                onSubmit={!busy ? handleSubmit : null}
+                onClose={onClose}
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -116,10 +184,11 @@ const TrailerSelector = ({ visible, handleChange, onTypeError, file }) => {
   );
 };
 
-const Progress = ({ message, width, visible, file }) => {
+const Progress = ({ message, width, visible, videoUploaded }) => {
   if (!visible) return null;
+
   return (
-    <div className="m-2 bg-secondary dark:bg-accent drop-shadow rounded p-3">
+    <div className=" p-3 bg-secondary dark:bg-accent drop-shadow rounded">
       <div className="relative rounded-full overflow-hidden h-1 bg-gray-400">
         <div
           className="h-full rounded-full absolute left-0 bg-tertiary"

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs";
 
 const Input = ({ name, placeholder, label, ...rest }) => {
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
   return (
     <div className="relative">
       <div className="flex flex-col-reverse">

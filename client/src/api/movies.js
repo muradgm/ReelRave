@@ -1,23 +1,38 @@
+import { catchError, getToken } from "../utils/helper";
 import client from "./client";
 
 export const uploadTrailer = async (formData, onUploadProgress) => {
-  const token = localStorage.getItem("auth-token");
+  const token = getToken();
   try {
     const { data } = await client.post("/movie/upload-trailer", formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        "content-type": "multipart/from-data",
+        authorization: `Bearer ${token}`,
+        "content-type": "multipart/form-data",
       },
       onUploadProgress: ({ loaded, total }) => {
         if (onUploadProgress)
           onUploadProgress(Math.floor((loaded / total) * 100));
       },
     });
+    console.log("data :>> ", data);
     return data;
   } catch (error) {
-    const { response } = error;
-    if (response?.data) return response.data;
+    return catchError(error);
+  }
+};
 
-    return { error: error.message || error };
+export const uploadMovie = async (formData) => {
+  const token = getToken();
+  try {
+    const { data } = await client.post("/movie/create", formData, {
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "multipart/form-data",
+      },
+    });
+    console.log("data :>> ", data);
+    return data;
+  } catch (error) {
+    return catchError(error);
   }
 };

@@ -4,14 +4,9 @@ import { AiOutlineClose } from "react-icons/ai";
 
 const WritersModal = ({ onClose, profiles = [], visible, handleRemove }) => {
   return (
-    <ModalContainer
-      visible={visible}
-      onClose={onClose}
-      // ignoreContainer="max-w-[45rem] max-h-[40rem]"
-      maxContainer={false}
-    >
+    <ModalContainer visible={visible} onClose={onClose} maxContainer={false}>
       <div className="space-y-4">
-        {profiles.map(({ id, name, avatar }, index) => {
+        {profiles.map(({ id, name, avatar }) => {
           return (
             <div key={id} className="flex flex-col">
               <div className="flex items-center space-x-4 drop-shadow bg-secondary dark:bg-gray-100 rounded p-2 dark:border-gray-200 border-gray-700 border">

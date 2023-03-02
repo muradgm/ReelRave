@@ -43,12 +43,7 @@ const GenresModal = ({
   }, []);
 
   return (
-    <ModalContainer
-      visible={visible}
-      onClose={handleClose}
-      // ignoreContainer="w-[45rem] h-[40rem]"
-      maxContainer={true}
-    >
+    <ModalContainer visible={visible} onClose={handleClose} maxContainer={true}>
       <div className="flex flex-col justify-between h-full p-6">
         <div className="">
           <h1 className="dark:text-primary text-accent font-semibold text-2xl text-center mb-10">

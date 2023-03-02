@@ -6,6 +6,12 @@
   padding: 0;
   box-sizing: border-box;
 }
+body {
+  font-family: "Roboto", sans-serif;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
 
 .spin-button-none::-webkit-inner-spin-button,
 .spin-button-none::-webkit-outer-spin-button {

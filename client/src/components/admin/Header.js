@@ -33,21 +33,41 @@ const Header = ({ onAddMovieClick, onAddActorClick }) => {
     },
   ];
 
+  const handleCloseCreateBtn = () => {
+    if (showOptions) {
+      setTimeout(() => {
+        setShowOptions(false);
+      }, 4000);
+    }
+  };
+
+  useEffect(() => {
+    handleCloseCreateBtn();
+  }, [showOptions]);
+
+  const createValue = () => {
+    return (
+      <React.Fragment>
+        Create
+        <GoPlus />
+      </React.Fragment>
+    );
+  };
+
   return (
     <div className="flex items-center justify-between relative">
-      <div className="relative flex items-center justify-between w-full">
-        {/* //z-10 */}
-        <div className="relative flex items-center text-gray-400 focus-within:text-accent dark:focus-within:text-primary">
+      <div className="relative z-[150] flex items-center justify-between w-full">
+        <div className=" flex items-center text-gray-400 focus-within:text-accent dark:focus-within:text-primary">
           <FaSearch className="w-4 h-4 absolute ml-3 pointer-events-none" />
           <input
             type="text"
-            className="border-2 border-dark-subtle dark:border-light-subtle focus:border-accent dark:focus:border-primary dark:text-primary text-accent transition bg-transparent rounded-xl text-lg p-1 pl-10 outline-none"
+            className="border border-dark-subtle dark:border-light-subtle focus:border-accent dark:focus:border-primary dark:text-primary text-accent transition bg-transparent rounded-md text-lg p-1 pl-10 outline-none"
             placeholder="Search Movies..."
             autoComplete="off"
             aria-label="Search Movies"
           />
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-5 ml-5">
           <button
             onClick={toggleTheme}
             className="text-accent dark:text-primary"
@@ -55,16 +75,17 @@ const Header = ({ onAddMovieClick, onAddActorClick }) => {
             <BsFillSunFill size={24} />
           </button>
           <button
-            onClick={() => setShowOptions(!showOptions)}
-            className="create-button flex items-center space-x-2 hover:text-white text-accent transition font-semibold border-2 bg-tertiary border-tertiary rounded-xl text-lg px-3 py-1 drop-shadow hover:drop-shadow-none"
+            onClick={() => setShowOptions(true)}
+            className="group relative create-button flex items-center justify-center space-x-2 hover:text-white text-accent transition font-semibold bg-tertiary rounded-md text-lg px-3 py-1 h-10 w-[110px] overflow-hidden"
           >
             <span>Create</span>
             <GoPlus />
+            <div className="absolute top-0 -inset-full h-full w-1/2 z-[5] block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
           </button>
         </div>
       </div>
       <div
-        className={`absolute z-0 right-0 transition-all duration-300 ease-in ${
+        className={`absolute z-[120] right-0 transition-all duration-300 ease-in ${
           showOptions ? "visible top-12" : "invisible -top-full"
         }`}
       >
@@ -79,7 +100,7 @@ export default Header;
 const CreateOptions = ({ options }) => {
   return (
     <div
-      className={`flex flex-col space-y-3 p-4 bg-secondary text dark:bg-accent drop-shadow rounded-xl`}
+      className={`flex flex-col space-y-3 p-[1.1rem] bg-secondary text dark:bg-accent drop-shadow rounded-xl`}
     >
       {options.map(({ title, onClick }) => {
         return (

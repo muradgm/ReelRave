@@ -1,14 +1,23 @@
-import React from "react";
-import LiveSearch from "../LiveSearch";
-import { classes } from "../../utils/theme";
-import { renderItem, results } from "../admin/MovieForm";
+import React, { useState } from "react";
 import Submit from "./Submit";
-import { useData, useNotification } from "../../hooks";
+import LiveSearch from "../LiveSearch";
+import { useData, useNotification, useSearch } from "../../hooks";
+import { classes } from "../../utils/theme";
+import { searchActor } from "../../api/actor";
 
-const CastForm = ({ onSubmit }) => {
-  const { castInfo, setCastInfo, isKeyDown, setIsKeyDown, defaultCastInfo } =
-    useData();
+const defaultCastInfo = {
+  leadActor: false,
+  profile: {},
+  roleAs: "",
+};
+
+const CastForm = ({ onSubmit, renderItem, onSelect, movieInfo }) => {
+  const { isKeyDown, setIsKeyDown } = useData();
   const { updateNotification } = useNotification();
+  const { handleSearch, resetSearch } = useSearch();
+  const [profiles, setProfiles] = useState([]);
+  const [castInfo, setCastInfo] = useState({ ...defaultCastInfo });
+  const [value, setValue] = useState("");
 
   const handleOnChange = ({ target }) => {
     const { checked, name, value } = target;
@@ -16,21 +25,35 @@ const CastForm = ({ onSubmit }) => {
       return setCastInfo({ ...castInfo, leadActor: checked });
     setCastInfo({ ...castInfo, [name]: value });
   };
-
   const handleProfileSelect = (profile) => {
     setCastInfo({ ...castInfo, profile });
+    resetSearch();
+    setProfiles([]);
   };
-
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const { profile, roleAs } = castInfo;
     if (!profile.name)
       return updateNotification("error", "Cast profile is missing!");
     if (!roleAs.trim())
       return updateNotification("error", "Cast role is missing!");
+    if (movieInfo.cast.some((castMember) => castMember.roleAs === roleAs)) {
+      return updateNotification("error", "Cast role already exists!");
+    }
 
     onSubmit(castInfo);
-    setCastInfo({ ...defaultCastInfo });
-    console.log(castInfo);
+    setValue("");
+    resetSearch();
+    setProfiles([]);
+    setCastInfo({ ...defaultCastInfo, profile: { name: "" } });
+  };
+  const handleProfileChange = (e) => {
+    const { value } = e.target;
+    const { profile } = castInfo;
+    profile.name = value;
+    setCastInfo({ ...castInfo, ...profile });
+    handleSearch(searchActor, value, setProfiles);
+    resetSearch();
   };
 
   const { leadActor, profile, roleAs } = castInfo;
@@ -49,11 +72,12 @@ const CastForm = ({ onSubmit }) => {
         <LiveSearch
           placeholder="Search profile"
           value={profile.name}
-          results={results}
+          results={profiles}
           onSelect={handleProfileSelect}
           renderItem={renderItem}
           isKeyDown={isKeyDown}
           setIsKeyDown={setIsKeyDown}
+          onChange={handleProfileChange}
         />
       </div>
       <span className="dark:text-light-subtle text-dark-subtle font-semibold">
@@ -63,7 +87,7 @@ const CastForm = ({ onSubmit }) => {
         <input
           type="text"
           name="roleAs"
-          className={`${classes} border rounded-lg p-1 h-10 text-sm`}
+          className={`${classes} border rounded-lg p-2 h-10 text-sm`}
           placeholder="Role as"
           value={roleAs}
           onChange={handleOnChange}
