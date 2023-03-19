@@ -40,7 +40,21 @@ export const actorInfoValidator = [
     .not()
     .isEmpty()
     .withMessage("Gender is a required field!"),
+  check("birthDate")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Birth date is required")
+    .isISO8601()
+    .withMessage("Birth date must be a valid date"),
+  check("nationality")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Nationality is a required field!"),
 ];
+
+const currentYear = new Date().getFullYear() + 3;
 
 export const validateMovie = [
   check("title").trim().not().isEmpty().withMessage("Movie title is Missing!"),
@@ -53,7 +67,12 @@ export const validateMovie = [
   check("status")
     .isIn(["public", "private"])
     .withMessage("Movie status must be either Public or Private!"),
-  check("releaseDate").isDate().withMessage("Release date is Missing!"),
+  // check("releaseDate").isDate().withMessage("Release date is Missing!"),
+  check("releaseDate")
+    .notEmpty()
+    .withMessage("Release Year is missing!")
+    .isInt({ min: 1900, max: 2100 })
+    .withMessage(`Release Year must be between 1900 and ${currentYear}`),
   check("type").trim().not().isEmpty().withMessage("Movie type is Missing!"),
   check("genres")
     .isArray()
@@ -82,7 +101,7 @@ export const validateMovie = [
     .withMessage("Cast must be an array of strings!")
     .custom((cast) => {
       for (let i = 0; i < cast.length; i++) {
-        if (!isValidObjectId(cast[i].id))
+        if (!isValidObjectId(cast[i].actor))
           throw Error(`Invalid actor id at index${i} inside cast`);
         if (!cast[i].roleAs?.trim())
           throw Error(`RoleAs is missing at index ${i} inside cast!`);
@@ -111,11 +130,11 @@ export const validateMovie = [
 
       return true;
     }),
-  // check("poster").custom((_, { req }) => {
-  //   if (!req.file) throw Error("Poster file is missing!");
+  check("poster").custom((_, { req }) => {
+    if (!req.file) throw Error("Poster file is missing!");
 
-  //   return true;
-  // }),
+    return true;
+  }),
 ];
 
 export const validate = (req, res, next) => {

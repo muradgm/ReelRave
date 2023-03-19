@@ -35,12 +35,14 @@ export const uploadImageToCloud = async (file) => {
 };
 
 export const formatActor = (actor) => {
-  const { name, gender, about, _id, avatar } = actor;
+  const { name, gender, about, _id, avatar, nationality, birthDate } = actor;
   return {
     id: _id,
     name,
     about,
     gender,
+    nationality,
+    birthDate,
     avatar: avatar?.url,
   };
 };

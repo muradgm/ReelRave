@@ -10,12 +10,25 @@ const actorSchema = mongoose.Schema(
       trim,
       required,
     },
+    birthDate: {
+      type: Date,
+      required,
+    },
+    birthPlace: {
+      type,
+      trim,
+    },
     about: {
       type,
       trim,
       required,
     },
     gender: {
+      type,
+      trim,
+      required,
+    },
+    nationality: {
       type,
       trim,
       required,

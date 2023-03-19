@@ -1,8 +1,10 @@
 import express from "express";
 import {
   createActor,
+  getActors,
   getLatestActors,
   getSingleActor,
+  patchActor,
   removeActor,
   searchActor,
   updateActor,
@@ -32,9 +34,18 @@ router.post(
   updateActor
 );
 
+router.patch(
+  "/update/:actorId",
+  isAuth,
+  isAdmin,
+  uploadImage.single("avatar"),
+  patchActor
+);
+
 router.delete("/:actorId", isAuth, isAdmin, removeActor);
 router.get("/search", isAuth, isAdmin, searchActor);
 router.get("/latest-uploads", isAuth, isAdmin, getLatestActors);
+router.get("/actors", isAuth, isAdmin, getActors);
 router.get("/single/:id", getSingleActor);
 
 export default router;

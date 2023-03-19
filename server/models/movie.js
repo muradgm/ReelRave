@@ -17,14 +17,12 @@ const movieSchema = mongoose.Schema(
       required,
       trim,
     },
-    director: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "actor",
-      role: {
-        type,
-        enum: ["director"],
+    directors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "actor",
       },
-    },
+    ],
     releaseDate: {
       type: Date,
       required,
@@ -52,10 +50,6 @@ const movieSchema = mongoose.Schema(
         actor: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "actor",
-          role: {
-            type,
-            enum: ["actor"],
-          },
         },
         roleAs: String,
         leadActor: Boolean,
@@ -65,10 +59,6 @@ const movieSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "actor",
-        role: {
-          type,
-          enum: ["writer"],
-        },
       },
     ],
     poster: {
@@ -83,6 +73,12 @@ const movieSchema = mongoose.Schema(
       url: { type, required },
       public_id: { type, required },
       required,
+    },
+    rating: {
+      type,
+    },
+    duration: {
+      type,
     },
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "review" }],
     language: { type, required },

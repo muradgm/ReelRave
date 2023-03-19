@@ -1,0 +1,13 @@
+###PATCH ACTORS
+PATCH http://localhost:5000/api/actor/update/63f3f05a51a72ad2d2091ca2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2Q3YjM1ZjBmZDI5YmZkOTYzNjA0MzUiLCJpYXQiOjE2NzYxNDQ1OTB9.-lAGF0XRE--LYj3k-wGDcm8R4BiM16-smTw1IYEAYfY
+Content-Type: application/json
+
+{
+    "nationality": "Canadian",
+    "birthPlace": "Vancouver, British Columbia, Canada",
+    "birthDate": "1982-04-03"
+}
+
+
+###CREATE MOVIE
