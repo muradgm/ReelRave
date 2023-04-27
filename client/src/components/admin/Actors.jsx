@@ -103,7 +103,7 @@ const Actors = () => {
 
   return (
     <>
-      <div className="z-[99] relative mt-32 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="z-[99] relative mt-10 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
         {ACTORS_TO_DISPLAY.map((actor, index) => (
           <div
             key={index}
