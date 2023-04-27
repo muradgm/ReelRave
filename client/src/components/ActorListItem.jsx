@@ -40,7 +40,7 @@ const ActorListItem = ({ actor, index }) => {
             <span className="text-sm text-gray-500">{age} years old</span>
           </div> */}
         <div className="text-sm text-accent dark:text-secondary mt-1 leading-5">
-          {about.split(" ").slice(0, 19).join(" ").concat("...")}
+          {about.split(" ").slice(0, 15).join(" ").concat("...")}
         </div>
       </div>
     </div>

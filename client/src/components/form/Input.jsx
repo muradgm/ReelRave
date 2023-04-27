@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 const Input = ({ name, placeholder, label, ...rest }) => {
-  // const [show, setShow] = useState(false);
   return (
     <div className="relative">
       <div className="flex flex-col-reverse">

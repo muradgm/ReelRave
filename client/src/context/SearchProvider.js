@@ -19,25 +19,6 @@ const SearchProvider = ({ children }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [resultNotFound, setResultNotFound] = useState(false);
 
-  // const isSearch = debounce(async (searchTerm) => {
-  //   if (searchTerm.length > 0) {
-  //     setSearching(true);
-  //     const res = await fetch(`/api/search/${searchTerm}`);
-  //     const data = await res.json();
-  //     if (data.length > 0) {
-  //       setSearchResults(data);
-  //       setResultNotFound(false);
-  //     } else {
-  //       setSearchResults([]);
-  //       setResultNotFound(true);
-  //     }
-  //     setSearching(false);
-  //   } else {
-  //     setSearchResults([]);
-  //     setResultNotFound(false);
-  //   }
-  // }, 500);
-
   const search = async (method, query, updaterFun) => {
     const { error, results } = await method(query);
     if (error) return updateNotification("error", error);

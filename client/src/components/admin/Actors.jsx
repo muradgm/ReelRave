@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { actors } from "../../utils/actors";
-import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
+// import { actors } from "../../utils/actors";
+import {
+  BsBoxArrowUpRight,
+  BsCheckLg,
+  BsPencilSquare,
+  BsTrash,
+} from "react-icons/bs";
 import ActorListItem from "../ActorListItem";
 import { EditButtons } from "../form/Labels";
 import { getActors } from "../../api/actor";
@@ -8,43 +13,55 @@ import { useNotification } from "../../hooks";
 import NextPrevButtons from "../NextPrevButtons";
 import { EditOverlay } from "../MovieListItems";
 
-const PER_PAGE = 12;
-const TOTAL_PAGES = Math.ceil(actors.length / PER_PAGE);
+const limit = 12;
+let currentPage = 0;
 
 const Actors = () => {
   const [show, setShow] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const { updateNotification } = useNotification();
+  const [actors, setActors] = useState([]);
+  const [last, setLast] = useState(false);
+  const [totalActorPages, setTotalActorPages] = useState(0);
+  // const [currentPage, setCurrentPage] = useState(0);
 
-  const START_INDEX = (currentPage - 1) * PER_PAGE;
-  const END_INDEX = START_INDEX + PER_PAGE;
-  const ACTORS_TO_DISPLAY = actors.slice(START_INDEX, END_INDEX);
+  const fetchActors = async (page) => {
+    const { profiles, error, totalPages } = await getActors(page, limit);
+    if (error) return updateNotification("error", error);
 
-  const handleOnMouseEnter = (index) => {
-    setShow((prev) => {
-      const newStates = [...prev];
-      newStates[index] = true;
-      return newStates;
-    });
-  };
-  const handleOnMouseLeave = (index) => {
-    setShow((prev) => {
-      const newStates = [...prev];
-      newStates[index] = false;
-      return newStates;
-    });
+    if (totalPages === 0) return setLast(true);
+
+    setActors([...profiles]);
+    setTotalActorPages(totalPages);
   };
 
-  const onNextClick = () => {
-    setCurrentPage(currentPage + 1);
+  const handleOnNextClick = () => {
+    if (last) return;
+    currentPage += 1;
+    fetchActors(currentPage);
   };
 
-  const onPreviousClick = () => {
-    setCurrentPage(currentPage - 1);
+  const handleOnPrevClick = () => {
+    if (currentPage <= 0) return;
+    currentPage -= 1;
+    fetchActors(currentPage);
   };
+
+  useEffect(() => {
+    fetchActors(currentPage);
+  }, []);
+
+  const handleOnMouseEnter = (id) => {
+    console.log("Mouse entered actor", id);
+    setShow((prev) => ({ ...prev, [id]: true }));
+  };
+  const handleOnMouseLeave = (id) => {
+    setShow((prev) => ({ ...prev, [id]: false }));
+  };
+
   const onDeleteClick = () => {
     console.log("delete");
   };
+
   const onEditClick = () => {
     console.log("edit");
   };
@@ -70,81 +87,52 @@ const Actors = () => {
     },
   ];
 
-  // const [actors, setActors] = useState([]);
-  // const [last, setLast] = useState(false);
-
-  // const fetchActors = async (page) => {
-  //   const {profiles, error}= await getActors(page, limit);
-  //   if (error) return updateNotification("error", error);
-
-  //   if (!profiles.length){
-  //    currentPage = page - 1;
-  //     return setLast(true);
-  //}
-
-  //   setActors([...profiles])
-  // };
-
-  // const handleOnNextClick = () => {
-  //   if (last) return;
-  //   currentPage += 1;
-  //   fetchActors(currentPage);
-  // };
-
-  // const handleOnPrevClick = () => {
-  //   if (currentPage <= 0) return;
-  //   currentPage -= 1;
-  //   fetchActors(currentPage);
-  // };
-
-  // useEffect(() => {
-  //   fetchActors(currentPage);
-  // }, []);
-
   return (
     <>
       <div className="z-[99] relative mt-10 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {ACTORS_TO_DISPLAY.map((actor, index) => (
-          <div
-            key={index}
-            className="bg-secondary dark:bg-accent shadow rounded h-full w-full overflow-hidden p-2 relative"
-            onMouseEnter={() => handleOnMouseEnter(index)}
-            onMouseLeave={() => handleOnMouseLeave(index)}
-          >
-            <div className="flex container w-full h-full p-1">
-              <ActorListItem
-                actor={actor}
-                index={index}
-                key={index}
-                editButtons={editButtons}
-                onDeleteClick={onDeleteClick}
-                onEditClick={onEditClick}
-                onOpenClick={onOpenClick}
-              />
+        {actors.map((actor, index) => {
+          return (
+            <div
+              key={actor.id}
+              className="bg-secondary dark:bg-accent shadow rounded h-full w-full overflow-hidden p-2 relative"
+              onMouseEnter={() => handleOnMouseEnter(actor.id)}
+              onMouseLeave={() => handleOnMouseLeave(actor.id)}
+            >
+              <div className="flex container w-full h-full p-1">
+                <ActorListItem
+                  actor={actor}
+                  index={actor.id}
+                  key={actor.id}
+                  editButtons={editButtons}
+                  onDeleteClick={onDeleteClick}
+                  onEditClick={onEditClick}
+                  onOpenClick={onOpenClick}
+                />
+              </div>
+              {show[actor.id] && (
+                <EditOverlay show={show} index={actor.id}>
+                  {editButtons.map(({ onClick, icon, title }, idx) => (
+                    <EditButtons
+                      onClick={() => onClick(actor.id)}
+                      title={title}
+                      key={`${actor.id}-${idx}`}
+                      index={idx}
+                    >
+                      {icon}
+                    </EditButtons>
+                  ))}
+                </EditOverlay>
+              )}
             </div>
-            {show[index] && (
-              <EditOverlay show={show} index={index}>
-                {editButtons.map(({ onClick, icon, title }, index) => (
-                  <EditButtons
-                    onClick={onClick}
-                    title={title}
-                    key={index}
-                    index={index}
-                  >
-                    {icon}
-                  </EditButtons>
-                ))}
-              </EditOverlay>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
       <NextPrevButtons
-        onNextClick={onNextClick}
-        onPreviousClick={onPreviousClick}
-        disableNext={currentPage === TOTAL_PAGES}
-        disablePrev={currentPage === 1}
-        pageNumber={`${currentPage} of ${TOTAL_PAGES}`}
+        onNextClick={() => handleOnNextClick()}
+        onPreviousClick={() => handleOnPrevClick()}
+        disableNext={currentPage === totalActorPages - 1}
+        disablePrev={currentPage === 0}
+        pageNumber={`${currentPage + 1} of ${totalActorPages}`}
       />
     </>
   );

@@ -1,5 +1,4 @@
 import React from "react";
-import { AiOutlineClose } from "react-icons/ai";
 
 const ModalContainer = ({ children, onClose, visible, maxContainer }) => {
   const handleClick = (e) => {

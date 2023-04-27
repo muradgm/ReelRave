@@ -5,5 +5,3 @@ export const classes =
 
 export const inputWrapperClasses =
   "text-gray-300 dark:text-gray-500 focus-within:text-accent focus-within:dark:text-primary space-y-1";
-
-// "bg-transparent border dark:border-gray-300 dark:text-gray-900 text-sm rounded-lg focus:ring-tertiary focus:border-tertiary block w-auto pl-10 p-2.5  border-dark-subtle dark:placeholder-gray-400 text-accent"

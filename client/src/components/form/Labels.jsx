@@ -1,5 +1,3 @@
-import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
-
 export const Label = ({ text, htmlFor }) => {
   return (
     <label htmlFor={htmlFor} className="text-md font-semibold">
@@ -83,21 +81,3 @@ export const EditButtons = ({ onClick, children, title, index }) => {
     </button>
   );
 };
-
-// export const editButtons = [
-//   {
-//     onClick: onEditClick,
-//     icon: <BsPencilSquare size={26} />,
-//     title: "Edit",
-//   },
-//   {
-//     onClick: onDeleteClick,
-//     icon: <BsTrash size={26} />,
-//     title: "Delete",
-//   },
-//   {
-//     onClick: onOpenClick,
-//     icon: <BsBoxArrowUpRight size={26} />,
-//     title: "Open",
-//   },
-// ];

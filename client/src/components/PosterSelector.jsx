@@ -45,5 +45,3 @@ const PosterUI = ({ className, label }) => {
     </div>
   );
 };
-
-//<img id="currentPhoto" src="SomeImage.jpg" onerror="this.onerror=null; this.src='Default.jpg'" alt="" width="100" height="120">

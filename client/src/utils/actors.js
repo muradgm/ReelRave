@@ -482,62 +482,12 @@ export const actors = [
   },
 ];
 
-/*
-top 10 hollywood actors, as following;
-in JSON format, including;
-name, gender, about.
-about should be min 200 and max 250 characters.
-
-please dont include any of the following
-Meryl Streep
-Leonardo DiCaprio
-Cate Blanchett
-Viola Davis
-Ryan Gosling
-Emma Stone
-Idris Elba
-Emma Watson
-Chris Evans
-Charlize Theron
-Chris Hemsworth
-Amy Adams
-Joaquin Phoenix
-Robert Downey Jr.
-Scarlett Johansson
-Samuel L. Jackson
-Tom Hanks
-Tom Cruise
-Tom Halland
-Angelina Jolie
-Brad Pitt
-Natalie Portman
-Saoirse Ronan
-Javier Bardem
-Michelle Williams
-Mahershala Ali
-Jennifer Lawrence
-Kate Winslet
-Daniel Kaluuya
-Gina Rodriguez
-John Boyega
-Lupita Nyong'o
-Adam Driver
-Zendaya
-Dwayne Jhonson
-Denzel Washington
-
-*/
 // pagination
 const pagination = (arr, page, limit) => {
   const start = (page - 1) * limit;
   const end = page * limit;
   return arr.slice(start, end);
 };
-
-// filter out the actors
-// const filteredActors = actors.filter(actor => {
-
-// }
 
 export const getActors = (arr, limit, page) => {
   const actors = pagination(arr, page, limit);
